@@ -7,23 +7,23 @@
   "subMetas": {
     "double_ship": {
       "ver": "1.0.3",
-      "uuid": "51f753f5-feb9-4e59-a59d-5050a72b9580",
+      "uuid": "88b066a3-fbff-404b-8c57-e3df40a07670",
       "rawTextureUuid": "3f47c9c8-d565-4b20-afcf-3d36389cd051",
       "trimType": "custom",
       "trimThreshold": 1,
       "rotated": false,
-      "offsetX": -31.5,
+      "offsetX": -45,
       "offsetY": 0.5,
-      "trimX": 18,
+      "trimX": 0,
       "trimY": 12,
-      "width": 81,
+      "width": 90,
       "height": 65,
       "rawWidth": 180,
       "rawHeight": 90,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,
-      "borderRight": 81,
+      "borderRight": 0,
       "subMetas": {}
     }
   }
