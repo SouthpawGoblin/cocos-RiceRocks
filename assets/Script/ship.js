@@ -43,7 +43,7 @@ cc.Class({
                         break;
                     case cc.KEY.w:
                         self.acc_cur = self.acc;    
-                        console.dir(self.getComponent(cc.Sprite));
+                        self.node.getComponent(cc.Sprite).spriteFrame = self.frame_thrust;
                         break;
                 }
             },
@@ -56,6 +56,7 @@ cc.Class({
                         break;
                     case cc.KEY.w:
                         self.acc_cur = 0;
+                        self.node.getComponent(cc.Sprite).spriteFrame = self.frame_normal;
                         break;
                 }
             }
@@ -66,13 +67,21 @@ cc.Class({
     onLoad: function () {
         // this.rotateAction = this.rotateAction();
         // this.node.runAction(this.rotateAction);
+        var self = this;
         
-        this.ang_vel_cur = 0;
-        this.acc_cur = 0;
-        this.vel_cur = 0;
+        // 加载 SpriteAtlas（图集），并且获取其中的一个 SpriteFrame
+        // 注意 atlas 资源文件（plist）通常会和一个同名的图片文件（png）放在一个目录下, 所以需要在第二个参数指定资源类型
+        cc.loader.loadRes("img/double_ship", cc.SpriteAtlas, function (err, atlas) {
+            self.frame_normal = atlas.getSpriteFrame('ship');
+            self.frame_thrust = atlas.getSpriteFrame('ship_thrust');
+        });
+        
+        self.ang_vel_cur = 0;
+        self.acc_cur = 0;
+        self.vel_cur = 0;
         
         //actual attributes
-        this.setInputControl();
+        self.setInputControl();
     },
 
     // called every frame, uncomment this function to activate update callback
