@@ -371,11 +371,14 @@
       "__id__": 7
     },
     "_enabled": true,
+    "_clip": {
+      "__uuid__": "fa1e3087-d244-4664-9f4c-7c4e7484e107"
+    },
     "_volume": 1,
     "_mute": false,
-    "_loop": false,
+    "_loop": true,
     "playOnLoad": false,
-    "preload": true
+    "preload": false
   },
   {
     "__type__": "cc.Canvas",

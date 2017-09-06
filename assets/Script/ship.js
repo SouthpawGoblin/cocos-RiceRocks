@@ -21,46 +21,36 @@ cc.Class({
         }
     },
 
-    rotateAction: function() {
-        var rotateLeft = cc.rotateBy(2, 360);
-        var rotateRight = rotateLeft.reverse();
-        return cc.repeatForever(cc.sequence(rotateLeft, rotateRight));
-    },
-    
-    setInputControl: function () {
+    _onKeyDown: function (event) {
         var self = this;
-        // 添加键盘事件监听
-        cc.eventManager.addListener({
-            event: cc.EventListener.KEYBOARD,
-            // 有按键按下时，判断是否是我们指定的方向控制键，并设置向对应方向加速
-            onKeyPressed: function(keyCode, event) {
-                switch(keyCode) {
-                    case cc.KEY.a:
-                        self.ang_vel_cur = -self.ang_vel;
-                        break;
-                    case cc.KEY.d:
-                        self.ang_vel_cur = self.ang_vel;
-                        break;
-                    case cc.KEY.w:
-                        self.acc_cur = self.acc;    
-                        self.node.getComponent(cc.Sprite).spriteFrame = self.frame_thrust;
-                        break;
-                }
-            },
-            // 松开按键时，停止向该方向的加速
-            onKeyReleased: function(keyCode, event) {
-                switch(keyCode) {
-                    case cc.KEY.a:
-                    case cc.KEY.d:
-                        self.ang_vel_cur = 0;
-                        break;
-                    case cc.KEY.w:
-                        self.acc_cur = 0;
-                        self.node.getComponent(cc.Sprite).spriteFrame = self.frame_normal;
-                        break;
-                }
-            }
-        }, self.node);
+        switch(event.keyCode) {
+            case cc.KEY.a:
+                self.ang_vel_cur = -self.ang_vel;
+                break;
+            case cc.KEY.d:
+                self.ang_vel_cur = self.ang_vel;
+                break;
+            case cc.KEY.w:
+                self.acc_cur = self.acc;    
+                self.sprite.spriteFrame = self.frame_thrust;
+                self.thrustAudio.play();
+                break;
+        }
+    },
+
+    _onKeyUp: function (event) {
+        var self = this;
+        switch(event.keyCode) {
+            case cc.KEY.a:
+            case cc.KEY.d:
+                self.ang_vel_cur = 0;
+                break;
+            case cc.KEY.w:
+                self.acc_cur = 0;
+                self.sprite.spriteFrame = self.frame_normal;
+                self.thrustAudio.stop();
+                break;
+        }
     },
 
     // use this for initialization
@@ -79,9 +69,11 @@ cc.Class({
         self.ang_vel_cur = 0;
         self.acc_cur = 0;
         self.vel_cur = 0;
+        self.sprite = self.node.getComponent(cc.Sprite);
+        self.thrustAudio = self.node.getComponent(cc.AudioSource);
         
-        //actual attributes
-        self.setInputControl();
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
     },
 
     // called every frame, uncomment this function to activate update callback
