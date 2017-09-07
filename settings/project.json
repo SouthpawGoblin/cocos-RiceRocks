@@ -3,17 +3,26 @@
     [
       false,
       true,
+      false,
       false
     ],
     [
       true,
       false,
-      false
+      false,
+      true
     ],
     [
       false,
       false,
+      false,
       false
+    ],
+    [
+      false,
+      true,
+      false,
+      true
     ]
   ],
   "design-resolution-height": 640,
@@ -24,7 +33,8 @@
   "group-list": [
     "ship",
     "asteroid",
-    "natural"
+    "natural",
+    "missile"
   ],
   "simulator-orientation": false,
   "simulator-resolution": {

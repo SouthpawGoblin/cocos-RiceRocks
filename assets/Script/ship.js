@@ -12,6 +12,10 @@ cc.Class({
         //    readonly: false,    // optional, default is false
         // },
         // ...
+        canvas: {
+            default: null,
+            type: cc.Node
+        },
         
         ang_vel: {
             default: 180
@@ -35,6 +39,9 @@ cc.Class({
                 self.sprite.spriteFrame = self.frame_thrust;
                 self.thrustAudio.play();
                 break;
+            case cc.KEY.space:
+                self._shoot();
+                break;
         }
     },
 
@@ -53,6 +60,15 @@ cc.Class({
         }
     },
 
+    _shoot: function() {
+        var self = this;
+        var missile = cc.instantiate(self.pref_missile);
+        missile.x = self.node.x;
+        missile.y = self.node.y;
+        missile.getComponent('shot').host = self.node;
+        self.canvas.addChild(missile);
+    },
+
     // use this for initialization
     onLoad: function () {
         // this.rotateAction = this.rotateAction();
@@ -64,6 +80,9 @@ cc.Class({
         cc.loader.loadRes("img/double_ship", cc.SpriteAtlas, function (err, atlas) {
             self.frame_normal = atlas.getSpriteFrame('ship');
             self.frame_thrust = atlas.getSpriteFrame('ship_thrust');
+        });
+        cc.loader.loadRes("prefab/shot", cc.Prefab, function (err, prefab) {
+            self.pref_missile = prefab;  
         });
         
         self.ang_vel_cur = 0;
@@ -81,7 +100,9 @@ cc.Class({
         this.node.rotation += this.ang_vel_cur * dt;
         
         this.node.x += this.vel_cur * dt * Math.cos(this.node.rotation / 180 * Math.PI);
+        this.node.x *= Math.abs(this.node.x) > this.canvas.width / 2 ? -1 : 1;
         this.node.y += -this.vel_cur * dt * Math.sin(this.node.rotation / 180 * Math.PI);
+        this.node.y *= Math.abs(this.node.y) > this.canvas.height / 2 ? -1 : 1;
         
         this.vel_cur += this.acc_cur * dt;
         this.vel_cur *= 0.99;
