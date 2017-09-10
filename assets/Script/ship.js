@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 cc.Class({
     extends: cc.Component,
 
@@ -22,6 +24,9 @@ cc.Class({
         }, 
         acc: {
             default: 3
+        },
+        fireRate: {
+            default: 0.1
         }
     },
 
@@ -40,7 +45,7 @@ cc.Class({
                 self.thrustAudio.play();
                 break;
             case cc.KEY.space:
-                self._shoot();
+                self.schedule(self._shoot, self.fireRate);
                 break;
         }
     },
@@ -57,15 +62,21 @@ cc.Class({
                 self.sprite.spriteFrame = self.frame_normal;
                 self.thrustAudio.stop();
                 break;
+            case cc.KEY.space:
+                self.unschedule(self._shoot);
+                break;
         }
     },
 
     _shoot: function() {
         var self = this;
-        var missile = cc.instantiate(self.pref_missile);
+        var missile = self.missilePool.get(self.missilePool, self.node);
+        if (!missile) {
+            missile = cc.instantiate(self.pref_missile);
+            missile.getComponent('shot').host = self.node;
+        }
         missile.x = self.node.x;
         missile.y = self.node.y;
-        missile.getComponent('shot').host = self.node;
         self.canvas.addChild(missile);
     },
 
@@ -83,6 +94,12 @@ cc.Class({
         });
         cc.loader.loadRes("prefab/shot", cc.Prefab, function (err, prefab) {
             self.pref_missile = prefab;  
+            self.missilePool = new cc.NodePool('shot');
+            var initCount = 5;
+            for (var i = 0; i < initCount; i++) {
+                var missile = cc.instantiate(self.pref_missile); // 创建节点
+                self.missilePool.put(missile); // 通过 putInPool 接口放入对象池
+            }
         });
         
         self.ang_vel_cur = 0;
@@ -90,9 +107,14 @@ cc.Class({
         self.vel_cur = 0;
         self.sprite = self.node.getComponent(cc.Sprite);
         self.thrustAudio = self.node.getComponent(cc.AudioSource);
-        
+
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
+    },
+
+    onDestroy: function() {
+        cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
+        cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
     },
 
     // called every frame, uncomment this function to activate update callback
@@ -106,5 +128,5 @@ cc.Class({
         
         this.vel_cur += this.acc_cur * dt;
         this.vel_cur *= 0.99;
-    },
+    }
 });

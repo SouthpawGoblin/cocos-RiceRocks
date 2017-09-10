@@ -25,6 +25,16 @@ cc.Class({
         }
     },
 
+    reuse: function(pool, host) {
+        this.pool = pool;
+        this.host = host;
+        this.angel = this.host.rotation;
+    },
+    
+    unuse: function() {
+        this.totalLength = 0;
+    },
+
     // use this for initialization
     onLoad: function () {
         var self = this;
@@ -36,7 +46,7 @@ cc.Class({
     update: function (dt) {
         var self = this;
         if (self.totalLength > self.range) {
-            self.node.destroy();
+            self.pool ? (self.pool.put(self.node)) : (self.destroy());
         }
         
         var ds = self.vel * dt;
