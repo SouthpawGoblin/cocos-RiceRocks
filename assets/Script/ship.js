@@ -45,7 +45,7 @@ cc.Class({
                 self.thrustAudio.play();
                 break;
             case cc.KEY.space:
-                self.schedule(self._shoot, self.fireRate);
+                self.shoot();
                 break;
         }
     },
@@ -63,7 +63,7 @@ cc.Class({
                 self.thrustAudio.stop();
                 break;
             case cc.KEY.space:
-                self.unschedule(self._shoot);
+                self.unshoot();
                 break;
         }
     },
@@ -107,6 +107,13 @@ cc.Class({
         self.vel_cur = 0;
         self.sprite = self.node.getComponent(cc.Sprite);
         self.thrustAudio = self.node.getComponent(cc.AudioSource);
+        
+        self.shoot = function() {
+            self.schedule(self._shoot, self.fireRate, cc.macro.REPEAT_FOREVER, 0.001)
+        };
+        self.unshoot = function() {
+            self.unschedule(self._shoot)
+        };
 
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
