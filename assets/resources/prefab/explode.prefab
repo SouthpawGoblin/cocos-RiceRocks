@@ -58,7 +58,7 @@
     "_localZOrder": 0,
     "_globalZOrder": 0,
     "_opacityModifyRGB": false,
-    "groupIndex": 0
+    "groupIndex": 2
   },
   {
     "__type__": "cc.ParticleSystem",
@@ -79,8 +79,8 @@
     "_totalParticles": 200,
     "_duration": 0.3,
     "_emissionRate": 999.999985098839,
-    "_life": 0,
-    "_lifeVar": 0.5,
+    "_life": 0.5,
+    "_lifeVar": 0.2,
     "_startColor": {
       "__type__": "cc.Color",
       "r": 253,

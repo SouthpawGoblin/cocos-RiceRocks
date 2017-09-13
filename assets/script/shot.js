@@ -38,6 +38,11 @@ cc.Class({
     // use this for initialization
     onLoad: function () {
         var self = this;
+        
+        self.collideManager = cc.director.getCollisionManager();
+        self.collideManager.enabled = true;
+        self.collideManager.enabledDebugDraw = true;
+        
         self.totalLength = 0;
         self.angel = self.host.rotation;
     },
