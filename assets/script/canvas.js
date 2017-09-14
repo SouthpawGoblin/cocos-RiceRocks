@@ -17,14 +17,32 @@ cc.Class({
         spawnInterval: 3
     },
 
+    _gameStart: function() {
+        
+    },
+
     _spawnAsteroid: function() {
         var self = this;
         if (self.asteroidPool.size() > 0) {
             var x = (Math.random() * 2 - 1) * self.node.width / 2;
             var y = (Math.random() * 2 - 1) * self.node.width / 2;
-            var ast = self.asteroidPool.get(x, y, self.node);
+            var ast = self.asteroidPool.get(x, y, self.node, self.asteroidPool);
             self.node.addChild(ast);
         }
+    },
+
+    _onKeyUp: function (event) {
+        var self = this;
+        switch(event.keyCode) {
+            case cc.KEY.space:
+                self._gameStart();
+                break;
+        }
+    },
+    
+    _onMouseUp: function (event) {
+        var self = this;
+        
     },
 
     // use this for initialization
@@ -41,7 +59,9 @@ cc.Class({
 
             self.schedule(self._spawnAsteroid, self.spawnInterval);
         });
-
+        
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, self._onKeyUp, self);
+        self.node.on(cc.Node.EventType.MOUSE_UP, self._onMouseUp, self);
     },
 
     // called every frame, uncomment this function to activate update callback

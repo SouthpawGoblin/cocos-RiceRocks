@@ -32,7 +32,7 @@ cc.Class({
         isUpdate: false
     },
 
-    reuse: function(x, y, canvas) {
+    reuse: function(x, y, canvas, pool) {
         var self = this;
         self.node.x = x;
         self.node.y = y;
@@ -41,6 +41,7 @@ cc.Class({
         self.xVel = (Math.random() * (self.maxVel - self.minVel) + self.minVel) * (Math.random() > 0.5 ? 1 : -1);
         self.yVel = (Math.random() * (self.maxVel - self.minVel) + self.minVel) * (Math.random() > 0.5 ? 1 : -1);
         self.canvas = canvas;
+        self.pool = pool;
 
         self.isUpdate = true;
     },
@@ -55,31 +56,26 @@ cc.Class({
      * @param  {Collider} self  产生碰撞的自身的碰撞组件
      */
     onCollisionEnter: function (other, self) {
-        console.log('on collision enter');
-    
-        // 碰撞系统会计算出碰撞组件在世界坐标系下的相关的值，并放到 world 这个属性里面
-        var world = self.world;
-    
-        // 碰撞组件的 aabb 碰撞框
-        var aabb = world.aabb;
-    
-        // 上一次计算的碰撞组件的 aabb 碰撞框
-        var preAabb = world.preAabb;
-    
-        // 碰撞框的世界矩阵
-        var t = world.transform;
-    
-        // 以下属性为圆形碰撞组件特有属性
-        var r = world.radius;
-        var p = world.position;
-    
-        // 以下属性为 矩形 和 多边形 碰撞组件特有属性
-        var ps = world.points;
+        switch (other.node.group) {
+            case "ship":
+            case "missile":
+                var exp = cc.instantiate(this.pref_explode);
+                exp.x = this.node.x;
+                exp.y = this.node.y;
+                exp.scale = this.node.scale;
+                this.canvas.addChild(exp);
+                this.pool ? (this.pool.put(this.node)) : (this.node.destroy());
+                break;
+        }
     },
 
     // use this for initialization
     onLoad: function () {
         var self = this;
+        
+        cc.loader.loadRes("prefab/explode", cc.Prefab, function (err, prefab) {
+            self.pref_explode = prefab;
+        });
         
         self.collideManager = cc.director.getCollisionManager();
         self.collideManager.enabled = true;

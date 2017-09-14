@@ -35,6 +35,19 @@ cc.Class({
         this.totalLength = 0;
     },
 
+    /**
+     * 当碰撞产生的时候调用
+     * @param  {Collider} other 产生碰撞的另一个碰撞组件
+     * @param  {Collider} self  产生碰撞的自身的碰撞组件
+     */
+    onCollisionEnter: function (other, self) {
+        switch (other.node.group) {
+            case "asteroid":
+                this.pool ? (this.pool.put(this.node)) : (this.node.destroy());
+                break;
+        }
+    },
+
     // use this for initialization
     onLoad: function () {
         var self = this;
@@ -51,7 +64,7 @@ cc.Class({
     update: function (dt) {
         var self = this;
         if (self.totalLength > self.range) {
-            self.pool ? (self.pool.put(self.node)) : (self.destroy());
+            self.pool ? (self.pool.put(self.node)) : (self.node.destroy());
         }
         
         var ds = self.vel * dt;

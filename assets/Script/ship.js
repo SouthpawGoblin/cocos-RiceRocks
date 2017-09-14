@@ -86,26 +86,15 @@ cc.Class({
      * @param  {Collider} self  产生碰撞的自身的碰撞组件
      */
     onCollisionEnter: function (other, self) {
-        console.log('on collision enter');
-    
-        // 碰撞系统会计算出碰撞组件在世界坐标系下的相关的值，并放到 world 这个属性里面
-        var world = self.world;
-    
-        // 碰撞组件的 aabb 碰撞框
-        var aabb = world.aabb;
-    
-        // 上一次计算的碰撞组件的 aabb 碰撞框
-        var preAabb = world.preAabb;
-    
-        // 碰撞框的世界矩阵
-        var t = world.transform;
-    
-        // 以下属性为圆形碰撞组件特有属性
-        var r = world.radius;
-        var p = world.position;
-    
-        // 以下属性为 矩形 和 多边形 碰撞组件特有属性
-        var ps = world.points;
+        switch (other.node.group) {
+            case "asteroid": 
+                var exp = cc.instantiate(this.pref_explode);
+                exp.x = this.node.x;
+                exp.y = this.node.y;
+                this.canvas.addChild(exp);
+                this.node.destroy();
+                break;
+        }
     },
 
     // use this for initialization
@@ -133,6 +122,9 @@ cc.Class({
                 self.missilePool.put(missile); // 通过 putInPool 接口放入对象池
             }
         });
+        cc.loader.loadRes("prefab/explode", cc.Prefab, function (err, prefab) {
+            self.pref_explode = prefab;
+        });
         
         self.ang_vel_cur = 0;
         self.acc_cur = 0;
@@ -147,8 +139,8 @@ cc.Class({
             self.unschedule(self._shoot)
         };
 
-        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
-        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, self._onKeyDown, self);
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, self._onKeyUp, self);
     },
 
     onDestroy: function() {

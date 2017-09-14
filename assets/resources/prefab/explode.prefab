@@ -19,10 +19,13 @@
     "_components": [
       {
         "__id__": 2
+      },
+      {
+        "__id__": 3
       }
     ],
     "_prefab": {
-      "__id__": 3
+      "__id__": 4
     },
     "_id": "",
     "_opacity": 255,
@@ -50,8 +53,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
+      "x": 480,
+      "y": 320
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -150,6 +153,23 @@
     "_rotatePerS": 20,
     "_rotatePerSVar": 0,
     "_N$preview": true
+  },
+  {
+    "__type__": "cc.AudioSource",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "_clip": {
+      "__uuid__": "d21aced5-77b2-4e51-9890-912fd4214ce1"
+    },
+    "_volume": 0.5,
+    "_mute": false,
+    "_loop": false,
+    "playOnLoad": true,
+    "preload": false
   },
   {
     "__type__": "cc.PrefabInfo",
