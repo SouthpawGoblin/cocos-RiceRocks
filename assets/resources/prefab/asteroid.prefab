@@ -56,8 +56,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 480,
-      "y": 320
+      "x": 0,
+      "y": 0
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -100,7 +100,6 @@
       "__id__": 1
     },
     "_enabled": true,
-    "canvas": null,
     "minScale": 0.2,
     "maxScale": 1.5,
     "minAngVel": 45,

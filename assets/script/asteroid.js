@@ -1,3 +1,5 @@
+var rrEvents = require("rrEvents");
+
 cc.Class({
     extends: cc.Component,
 
@@ -13,11 +15,6 @@ cc.Class({
         // },
         // ...
 
-        canvas: {
-            default: null,
-            type: cc.Node
-        },
-
         minScale: 0.2,
         maxScale: 1.5,
         minAngVel: 45,
@@ -32,7 +29,7 @@ cc.Class({
         isUpdate: false
     },
 
-    reuse: function(x, y, canvas, pool) {
+    reuse: function(x, y, game, pool) {
         var self = this;
         self.node.x = x;
         self.node.y = y;
@@ -40,7 +37,7 @@ cc.Class({
         self.angVel = (Math.random() * (self.maxAngVel - self.minAngVel) + self.minAngVel) * (Math.random() > 0.5 ? 1 : -1);
         self.xVel = (Math.random() * (self.maxVel - self.minVel) + self.minVel) * (Math.random() > 0.5 ? 1 : -1);
         self.yVel = (Math.random() * (self.maxVel - self.minVel) + self.minVel) * (Math.random() > 0.5 ? 1 : -1);
-        self.canvas = canvas;
+        self.game = game;
         self.pool = pool;
 
         self.isUpdate = true;
@@ -63,8 +60,9 @@ cc.Class({
                 exp.x = this.node.x;
                 exp.y = this.node.y;
                 exp.scale = this.node.scale;
-                this.canvas.addChild(exp);
+                this.game.addChild(exp);
                 this.pool ? (this.pool.put(this.node)) : (this.node.destroy());
+                this.game.emit(rrEvents.$SCORE);
                 break;
         }
     },
@@ -79,7 +77,7 @@ cc.Class({
         
         self.collideManager = cc.director.getCollisionManager();
         self.collideManager.enabled = true;
-        self.collideManager.enabledDebugDraw = true;
+        // self.collideManager.enabledDebugDraw = true;
     },
 
     // called every frame, uncomment this function to activate update callback
@@ -87,9 +85,9 @@ cc.Class({
         var self = this;
         if (self.isUpdate) {
             self.node.x += self.xVel * dt;
-            self.node.x *= Math.abs(self.node.x) > self.canvas.width / 2 ? -1 : 1;
+            self.node.x *= Math.abs(self.node.x) > self.game.width / 2 ? -1 : 1;
             self.node.y += self.yVel * dt;
-            self.node.y *= Math.abs(self.node.y) > self.canvas.height / 2 ? -1 : 1;
+            self.node.y *= Math.abs(self.node.y) > self.game.height / 2 ? -1 : 1;
             self.node.rotation += self.angVel * dt;
         }
     }

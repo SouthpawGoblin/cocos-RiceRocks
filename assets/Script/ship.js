@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var rrEvents = require('rrEvents');
 
 cc.Class({
     extends: cc.Component,
@@ -14,7 +14,8 @@ cc.Class({
         //    readonly: false,    // optional, default is false
         // },
         // ...
-        canvas: {
+        
+        game: {
             default: null,
             type: cc.Node
         },
@@ -77,7 +78,7 @@ cc.Class({
         }
         missile.x = self.node.x;
         missile.y = self.node.y;
-        self.canvas.addChild(missile);
+        self.game.addChild(missile);
     },
 
     /**
@@ -91,8 +92,9 @@ cc.Class({
                 var exp = cc.instantiate(this.pref_explode);
                 exp.x = this.node.x;
                 exp.y = this.node.y;
-                this.canvas.addChild(exp);
+                this.game.addChild(exp);
                 this.node.destroy();
+                this.game.emit(rrEvents.$CRASH);
                 break;
         }
     },
@@ -105,7 +107,7 @@ cc.Class({
         
         self.collideManager = cc.director.getCollisionManager();
         self.collideManager.enabled = true;
-        self.collideManager.enabledDebugDraw = true;
+        // self.collideManager.enabledDebugDraw = true;
         
         // 加载 SpriteAtlas（图集），并且获取其中的一个 SpriteFrame
         // 注意 atlas 资源文件（plist）通常会和一个同名的图片文件（png）放在一个目录下, 所以需要在第二个参数指定资源类型
@@ -153,9 +155,9 @@ cc.Class({
         this.node.rotation += this.ang_vel_cur * dt;
         
         this.node.x += this.vel_cur * dt * Math.cos(this.node.rotation / 180 * Math.PI);
-        this.node.x *= Math.abs(this.node.x) > this.canvas.width / 2 ? -1 : 1;
+        this.node.x *= Math.abs(this.node.x) > this.game.width / 2 ? -1 : 1;
         this.node.y += -this.vel_cur * dt * Math.sin(this.node.rotation / 180 * Math.PI);
-        this.node.y *= Math.abs(this.node.y) > this.canvas.height / 2 ? -1 : 1;
+        this.node.y *= Math.abs(this.node.y) > this.game.height / 2 ? -1 : 1;
         
         this.vel_cur += this.acc_cur * dt;
         this.vel_cur *= 0.99;
