@@ -1,4 +1,5 @@
 var rrEvents = require('rrEvents');
+var rrPools = require("rrPools");
 
 cc.Class({
     extends: cc.Component,
@@ -32,6 +33,10 @@ cc.Class({
     },
 
     _onKeyDown: function (event) {
+        if (!this.game.getComponent('game').gameOn) {
+            return;
+        }
+        
         var self = this;
         switch(event.keyCode) {
             case cc.KEY.a:
@@ -52,7 +57,12 @@ cc.Class({
     },
 
     _onKeyUp: function (event) {
+        if (!this.game.getComponent('game').gameOn) {
+            return;
+        }
+        
         var self = this;
+        this.game
         switch(event.keyCode) {
             case cc.KEY.a:
             case cc.KEY.d:
@@ -70,12 +80,17 @@ cc.Class({
     },
 
     _shoot: function() {
+        if (!this.game.getComponent('game').gameOn) {
+            return;
+        }
+        
         var self = this;
         var missile = self.missilePool.get(self.missilePool, self.node);
         if (!missile) {
             missile = cc.instantiate(self.pref_missile);
             missile.getComponent('shot').host = self.node;
         }
+        rrPools.shots.push(missile);
         missile.x = self.node.x;
         missile.y = self.node.y;
         self.game.addChild(missile);
@@ -93,7 +108,12 @@ cc.Class({
                 exp.x = this.node.x;
                 exp.y = this.node.y;
                 this.game.addChild(exp);
-                this.node.destroy();
+                cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, self._onKeyDown, self);
+                cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, self._onKeyUp, self);
+                this.node.x = 0;
+                this.node.y = 0;
+                this.node.rotation = -90;
+                this.vel_cur = 0;
                 this.game.emit(rrEvents.$CRASH);
                 break;
         }
@@ -145,13 +165,12 @@ cc.Class({
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, self._onKeyUp, self);
     },
 
-    onDestroy: function() {
-        cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this._onKeyDown, this);
-        cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this._onKeyUp, this);
-    },
-
     // called every frame, uncomment this function to activate update callback
     update: function (dt) {
+        if (!this.game.getComponent('game').gameOn) {
+            return;
+        }
+        
         this.node.rotation += this.ang_vel_cur * dt;
         
         this.node.x += this.vel_cur * dt * Math.cos(this.node.rotation / 180 * Math.PI);

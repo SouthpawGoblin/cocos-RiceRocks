@@ -1,4 +1,6 @@
 var rrEvents = require("rrEvents");
+var rrPools = require("rrPools");
+var _ = require("underscore");
 
 cc.Class({
     extends: cc.Component,
@@ -43,6 +45,7 @@ cc.Class({
             var x = (Math.random() * 2 - 1) * self.node.width / 2;
             var y = (Math.random() * 2 - 1) * self.node.width / 2;
             var ast = self.asteroidPool.get(x, y, self.node, self.asteroidPool);
+            rrPools.asteroids.push(ast);
             self.node.addChild(ast);
         }
     },
@@ -50,7 +53,7 @@ cc.Class({
     onBegin: function() {
         var self = this;
         self.schedule(self._spawnAsteroid, self.spawnInterval);
-        self.splash.destroy();
+        self.splash.active = false;
         self.gameOn = true;
     },
     
@@ -62,6 +65,13 @@ cc.Class({
         self.gameOn = false;
         self.label_life.getComponent(cc.Label).string = "LIFE: " + self.life;
         self.label_score.getComponent(cc.Label).string = "SCORE: " + self.score;
+        _.each(rrPools.shots, function(item) {
+            item.getComponent("shot").pool ? item.getComponent("shot").pool.put(item) : item.destroy();
+        });
+         _.each(rrPools.asteroids, function(item) {
+            item.getComponent("asteroid").pool ? item.getComponent("asteroid").pool.put(item) : item.destroy();
+        });
+        self.splash.active = true;
     },
     
     onCrash: function() {
@@ -70,8 +80,6 @@ cc.Class({
         self.label_life.getComponent(cc.Label).string = "LIFE: " + self.life;
         if (self.life === 0) {
             self.node.emit(rrEvents.$OVER);
-        } else {
-            //respawn ship
         }
     },
     
